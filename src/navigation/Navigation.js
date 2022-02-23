@@ -6,8 +6,8 @@ import {useAuth} from '../lib/auth';
 import Home from '../screens/Home';
 import LoginStack from './LoginStack';
 import EditProfileOptionsUser from '../screens/account/EditProfileOptionsUser';
-import GroceryList from '../screens/grocery/GroceryList';
 import GroceryStack from './GroceryStack';
+import GroceryList from '../screens/grocery/GroceryList';
 
 const Tab = createBottomTabNavigator();
 
