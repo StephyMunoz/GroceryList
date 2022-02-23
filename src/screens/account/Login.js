@@ -13,7 +13,7 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useAuth} from '../../lib/auth';
 import {useNavigation} from '@react-navigation/native';
-import loginIcon from '../../images/hero_illustration.png';
+import loginIcon from '../../images/login.jpg';
 import {auth} from '../../firebase';
 import Modal from '../../components/Modal';
 import Toast from 'react-native-easy-toast';
@@ -150,6 +150,7 @@ const Login = () => {
               title="Inicia sesión"
               disabled={!isValid}
               containerStyle={styles.btnContainerLogin}
+              buttonStyle={{backgroundColor: '#a061a8'}}
             />
           </>
         )}
@@ -199,6 +200,7 @@ const Login = () => {
                 disabled={!isValid}
                 containerStyle={styles.btnContainerLogin}
                 loading={loading}
+                buttonStyle={{backgroundColor: '#a061a8'}}
               />
             </>
           )}
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
   },
   btnContainerLogin: {
     marginTop: 20,
-    width: '95%',
+    width: '50%',
   },
   password: {
     textAlign: 'center',
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
     margin: 20,
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#000',
+    // color: '#000',
   },
   logo: {
     height: 110,
@@ -256,6 +258,7 @@ const styles = StyleSheet.create({
   textLogin: {
     fontSize: 20,
     textAlign: 'center',
+    // color: '#000',
   },
   loginText: {
     textAlign: 'center',

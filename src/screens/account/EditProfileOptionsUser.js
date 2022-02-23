@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import avatarImage from '../../images/avatar-default.jpg';
+import avatarImage from '../../images/character_icons_7.png';
 import {Avatar, Button, Icon, ListItem} from 'react-native-elements';
 import {useAuth} from '../../lib/auth';
 import ChangeDisplayNameForm from '../../components/account/ChangeDisplayNameForm';
@@ -27,6 +27,7 @@ const ProfileOptions = () => {
   const [expanded, setExpanded] = useState(false);
   const [change, setChange] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [text, setText] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -37,14 +38,6 @@ const ProfileOptions = () => {
     })();
     setChange(false);
   }, [change, user]);
-
-  // if (user && user.emailVerified === false) {
-  //   Alert.alert(
-  //     'Correo de verificación enviado',
-  //     'Revisa tu badeja de Correo No Deseado o dirígete a Perfil para reenviar el link de activación. No podrás acceder a las funcionalidades completas',
-  //     [{text: 'Entendido'}],
-  //   );
-  // }
 
   const options = {
     title: 'Seleccion de avatar',
@@ -64,6 +57,7 @@ const ProfileOptions = () => {
       } else if (response.errorCode) {
         toastRef.current.show('Ha ocurrido un error ', response.errorCode);
       } else {
+        console.log('imagen', response.assets[0]);
         if (response.assets[0].type.split('/')[0] === 'image') {
           if (response.assets[0].fileSize > 2000000) {
             toastRef.current.show('La imagen es muy pesada, excede los 2 MB');
@@ -82,17 +76,17 @@ const ProfileOptions = () => {
       }
     });
   };
+
   const uploadImage = async uri => {
+    setText('Actualizando Avatar');
     setLoading(true);
-    const response = await fetch(uri);
+    const response = await fetch(uri.name);
     const blob = await response.blob();
     const ref = storage.ref().child(`avatar/${user.uid}`);
     return ref.put(blob);
   };
 
   const updatePhotoUrl = () => {
-    setLoading(true);
-
     storage
       .ref(`avatar/${user.uid}`)
       .getDownloadURL()
@@ -116,25 +110,6 @@ const ProfileOptions = () => {
   };
   const changePassword = () => {
     setShowModalPassword(true);
-  };
-
-  const handleConfirmation = () => {
-    Alert.alert(
-      'Reenviar correro de verficación',
-      'Se reenviará el código de verificación, por favor revise su Correo No Deseado',
-      [{text: 'Cancelar'}, {text: 'Reenviar email', onPress: handleSendEmail}],
-    );
-  };
-
-  const handleSendEmail = async () => {
-    await auth.currentUser
-      .sendEmailVerification()
-      .then(
-        toastRef.current.show(
-          'Se ha reenviado un email de verificación a tu correo electrónico',
-        ),
-        setLoading(false),
-      );
   };
 
   return (
@@ -162,25 +137,13 @@ const ProfileOptions = () => {
           <Text style={styles.emailText}>{auth.currentUser.email}</Text>
           <Button
             title="Cerrar sesión"
-            buttonStyle={styles.btnCloseSession}
             titleStyle={styles.btnCloseSessionText}
+            buttonStyle={{backgroundColor: '#a061a8'}}
             onPress={logout}
           />
         </View>
       </View>
       <View>
-        {user.emailVerified === false && (
-          <TouchableOpacity onPress={handleConfirmation}>
-            <ListItem bottomDivider contarinerStyle={styles.view}>
-              <Icon name="email" size={40} style={styles.iconStyle} />
-              <ListItem.Content>
-                <ListItem.Title>Cuenta no verificada</ListItem.Title>
-                <ListItem.Subtitle>Reenviar correo</ListItem.Subtitle>
-              </ListItem.Content>
-            </ListItem>
-          </TouchableOpacity>
-        )}
-
         <ListItem.Accordion
           content={
             <>
@@ -251,7 +214,7 @@ const ProfileOptions = () => {
         {/*  setIsVisible={setShowModal}*/}
         {/*/>*/}
       </View>
-      <Loading isVisible={loading} />
+      <Loading isVisible={loading} text={text} />
       <Toast ref={toastRef} position="center" opacity={0.9} />
     </ScrollView>
   );

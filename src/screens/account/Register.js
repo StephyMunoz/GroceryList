@@ -14,7 +14,7 @@ import * as yup from 'yup';
 import Toast from 'react-native-easy-toast';
 import {useAuth} from '../../lib/auth';
 import {useNavigation} from '@react-navigation/native';
-import accountImage from '../../images/gdpr_icons_5.png';
+import accountImage from '../../images/character_icons_7.png';
 import {auth} from '../../firebase';
 
 const Register = () => {
@@ -73,11 +73,11 @@ const Register = () => {
       <View style={styles.formContainer}>
         <Text style={styles.text}>Registra tu cuenta</Text>
         <Text style={styles.textLogin}>¿Ya tienes una cuenta?</Text>
-        <TouchableOpacity onPress={loginScreen} style={styles.loginButton}>
+        <TouchableOpacity onPress={loginScreen} style={styles.loginText}>
           <Text style={styles.loginText}>Inicia sesión</Text>
         </TouchableOpacity>
 
-        <Image source={accountImage} style={styles.logo} />
+        <Image source={accountImage} style={styles.logo} resizeMode="contain" />
 
         <Formik
           validationSchema={schema}
@@ -157,6 +157,7 @@ const Register = () => {
                 title="Registrarme"
                 disabled={!isValid}
                 containerStyle={styles.btnContainerLogin}
+                buttonStyle={{backgroundColor: '#a061a8'}}
               />
             </>
           )}
@@ -206,9 +207,9 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   logo: {
-    height: 50,
+    height: 100,
     marginTop: 10,
-    width: 50,
+    width: 100,
   },
   textLogin: {
     fontSize: 20,

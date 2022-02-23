@@ -12,7 +12,6 @@ const firebaseConfig = {
   storageBucket: Config.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: Config.REACT_APP_MESSAGING_SENDER_ID,
   appId: Config.REACT_APP_APP_ID,
-  measurementId: Config.REACT_APP_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -22,7 +21,6 @@ if (firebase.apps.length === 0) {
 } else {
   app = firebase.app(); // if already initialized, use that one
 }
-// const app = initializeApp(firebaseConfig);
 
 export const db = app.database();
 export const auth = app.auth();
