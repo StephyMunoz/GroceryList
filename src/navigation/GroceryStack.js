@@ -4,6 +4,7 @@ import Login from '../screens/account/Login';
 import Register from '../screens/account/Register';
 import GroceryList from '../screens/grocery/GroceryList';
 import ListForm from '../screens/grocery/ListForm';
+import ListDetail from '../screens/grocery/ListDetail';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ export default function GroceryStack() {
         component={ListForm}
         options={{title: 'Agregar lista'}}
       />
+      <Stack.Screen name="list_detail" component={ListDetail} />
     </Stack.Navigator>
   );
 }
