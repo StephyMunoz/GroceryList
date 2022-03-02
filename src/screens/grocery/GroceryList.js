@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -24,18 +25,28 @@ const GroceryList = () => {
   const {user} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [groceryList, setGroceryList] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const wait = timeout => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, [setRefreshing]);
 
   useFocusEffect(
     useCallback(() => {
       let listItem = [];
       db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
         snapshot.forEach(item => {
-          console.log('wh', item);
           const q = item.val();
           listItem.push(q);
+          console.log('que productos hay', q.products);
         });
       });
-      setGroceryList(listItem);
+      setGroceryList(listItem.reverse());
     }, [user.uid]),
   );
 
@@ -48,11 +59,19 @@ const GroceryList = () => {
       ) : (
         <FlatList
           data={groceryList}
+          refreshControl={
+            <RefreshControl
+              enabled={true}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
           renderItem={listItem => (
             <List
               navigation={navigation}
               toastRef={toastRef}
               listItem={listItem}
+              setRefresh={setRefreshing}
             />
           )}
           keyExtractor={(item, index) => index.toString()}
@@ -72,18 +91,51 @@ const GroceryList = () => {
   );
 };
 
-function List({listItem, navigation, toastRef}) {
+function List({listItem, navigation, toastRef, setRefresh}) {
   const {id, title, products} = listItem.item;
-  // console.log('djd', groceryList[0].id);
-  // console.log('grocery', groceryList);
-  console.log('title', title);
-  console.log('prod', products);
-  // console.log('products', groceryList.products);
+  const {user} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(null);
 
   const handleNavigation = () => {
     navigation.navigate('list_detail', {id, title, products});
+  };
+
+  const handleEdit = () => {
+    navigation.navigate('edit_list', {id, title, products});
+  };
+
+  const handleConfirmDelete = () => {
+    Alert.alert(
+      'Eliminar lista',
+      `¿Estas segur@ que desea eliminar la lista ${title}?`,
+      [{text: 'Cancelar'}, {text: 'Eliminar', onPress: handleDelete}],
+    );
+  };
+
+  const handleDelete = () => {
+    setIsLoading(true);
+    setLoadingText('Eliminando lista de compras');
+    db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
+      snapshot.forEach(item => {
+        const q = item.val();
+        if (q.id === id) {
+          db.ref(`groceryList/${user.uid}/${item.key}`)
+            .remove()
+            .then(() => {
+              toastRef.current.show('Lista eliminada correctamente');
+              setRefresh(true);
+              setIsLoading(false);
+            })
+            .catch(() => {
+              setIsLoading(false);
+              toastRef.current.show(
+                'Ha ocurrido un error, por favor intente nuevamente más tarde ',
+              );
+            });
+        }
+      });
+    });
   };
 
   return (
@@ -97,14 +149,14 @@ function List({listItem, navigation, toastRef}) {
           type="material-community"
           size={30}
           containerStyle={styles.iconEdit}
-          // onPress={handleEdit}
+          onPress={handleEdit}
         />
         <Icon
           name="delete"
           type="material-community"
           size={30}
           containerStyle={styles.iconTrash}
-          // onPress={handleDelete}
+          onPress={handleConfirmDelete}
         />
         <Divider style={styles.divider} width={1} />
       </View>

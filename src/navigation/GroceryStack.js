@@ -5,6 +5,7 @@ import Register from '../screens/account/Register';
 import GroceryList from '../screens/grocery/GroceryList';
 import ListForm from '../screens/grocery/ListForm';
 import ListDetail from '../screens/grocery/ListDetail';
+import EditGroceryList from '../screens/grocery/EditGroceryList';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,11 @@ export default function GroceryStack() {
         options={{title: 'Agregar lista'}}
       />
       <Stack.Screen name="list_detail" component={ListDetail} />
+      <Stack.Screen
+        name="edit_list"
+        component={EditGroceryList}
+        options={{title: 'Editar lista'}}
+      />
     </Stack.Navigator>
   );
 }

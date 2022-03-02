@@ -8,7 +8,7 @@ import {
   RefreshControl,
   View,
 } from 'react-native';
-import {Divider, Icon} from 'react-native-elements';
+import {CheckBox, Divider, Icon} from 'react-native-elements';
 import Loading from '../../components/Loading';
 import Toast from 'react-native-easy-toast';
 import {db} from '../../firebase';
@@ -63,58 +63,42 @@ const ListDetail = props => {
   );
 };
 
-function ProductList({
-  product,
-  navigation,
-  idPublication,
-  setRefreshing,
-  toastRef,
-}) {
+function ProductList({product, idPublication, setRefreshing, toastRef}) {
   const {id, price, name, imgUrl} = product.item;
   const {user} = useAuth();
-  console.log('prod', product);
-  console.log('id pro', id);
-  console.log('id', idPublication);
-  // console.log('products', groceryList.products);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(null);
+  const [isSelected, setSelection] = useState(false);
   const [productsItem, setProductsItem] = useState(null);
 
   const handleDelete = () => {
-    let arrayProducts = [];
-    // setIsLoading(true);
-    // setLoadingText('Eliminando producto');
     db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
       snapshot.forEach(item => {
         const q = item.val();
         if (q.id === idPublication) {
-          setProductsItem(q.products);
-          // if(q.pr)
-          console.log('whart', q.products);
+          q.products.forEach((itemIn, i) => {
+            if (itemIn.id === id) {
+              console.log('cada uni', i);
+              db.ref(
+                `groceryList/${user.uid}/${item.key}/products/${i}/checked`,
+              )
+                .set(true)
+                .then(() => {
+                  setIsLoading(false);
+                  setRefreshing(true);
+                  toastRef.current.show('Producto eliminado');
+                })
+                .catch(() => {
+                  setIsLoading(false);
+                  toastRef.current.show(
+                    'Ha ocurrido un error, por favor intente nuevamente más tarde ',
+                  );
+                });
+            }
+          });
         }
-        productsItem.forEach((prod, i) => {
-          if (prod.id === id) {
-            db.ref(`groceryList/${user.uid}/${item.key}/${i}`)
-              .remove()
-              .then(() => {
-                setIsLoading(false);
-                setRefreshing(true);
-                toastRef.current.show('Producto eliminado');
-              })
-              .catch(() => {
-                setIsLoading(false);
-                toastRef.current.show(
-                  'Ha ocurrido un error, por favor intente nuevamente más tarde ',
-                );
-              });
-          }
-        });
       });
     });
-
-    return () => {
-      db.ref('campaigns').off();
-    };
   };
 
   return (
@@ -123,13 +107,21 @@ function ProductList({
         <Text style={styles.title}>{name}</Text>
         <Image source={{uri: imgUrl}} style={styles.productImage} />
         <Divider style={styles.divider} width={1} />
-        <Icon
-          name="delete"
-          type="material-community"
-          size={30}
-          containerStyle={styles.iconTrash}
-          onPress={handleDelete}
+        <CheckBox
+          right
+          checked={isSelected}
+          onPress={() => setSelection(!isSelected)}
+          containerStyle={styles.checkbox}
+          checkedColor="#a061a8"
+          color="#a061a8"
         />
+        {/*<Icon*/}
+        {/*  name="delete"*/}
+        {/*  type="material-community"*/}
+        {/*  size={30}*/}
+        {/*  containerStyle={styles.iconTrash}*/}
+        {/*  onPress={handleDelete}*/}
+        {/*/>*/}
       </View>
       <Loading isVisible={isLoading} text={loadingText} />
     </View>
@@ -158,12 +150,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  title: {
-    textAlign: 'center',
-    fontSize: 20,
-    color: '#070636',
-  },
   iconTrash: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
+  checkbox: {
     position: 'absolute',
     right: 10,
     top: 10,
@@ -172,5 +164,42 @@ const styles = StyleSheet.create({
     height: 150,
     width: 150,
     alignContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    marginTop: 20,
+    color: '#000',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  form: {
+    flexDirection: 'row',
+  },
+  actionText: {
+    color: '#5da1d8',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+  },
+  divider: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  action: {
+    flexDirection: 'row',
+  },
+  columns: {
+    // borderWidth: 1,
+  },
+  inputForm: {
+    marginBottom: 10,
+  },
+  errorMessage: {
+    fontSize: 10,
+    color: '#000',
+  },
+  btnContainerLogin: {
+    width: '20%',
   },
 });

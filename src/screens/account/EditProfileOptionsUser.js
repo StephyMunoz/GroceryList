@@ -117,17 +117,15 @@ const ProfileOptions = () => {
       <View style={styles.viewUserInfo}>
         <Avatar
           rounded
+          resizeMode="contain"
           size="xlarge"
-          onPress={changeAvatar}
-          icon={{name: 'adb', type: 'material', onPress: {changeAvatar}}}
           containerStyle={styles.userInfoAvatar}
           source={
             auth.currentUser.photoURL
               ? {uri: auth.currentUser.photoURL}
               : avatarImage
-          }>
-          <Avatar.Accessory size={35} />
-        </Avatar>
+          }
+        />
         <View style={styles.textStyle}>
           <Text style={styles.displayName}>
             {auth.currentUser.displayName
@@ -137,7 +135,6 @@ const ProfileOptions = () => {
           <Text style={styles.emailText}>{auth.currentUser.email}</Text>
           <Button
             title="Cerrar sesión"
-            titleStyle={styles.btnCloseSessionText}
             buttonStyle={{backgroundColor: '#a061a8'}}
             onPress={logout}
           />
@@ -237,6 +234,7 @@ const styles = StyleSheet.create({
   },
   userInfoAvatar: {
     marginRight: 20,
+    resizeMode: 'contain',
   },
   displayName: {
     fontWeight: 'bold',

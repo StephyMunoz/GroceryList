@@ -1,37 +1,34 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  FlatList,
-  RefreshControl,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
   ActivityIndicator,
   Button,
-  Dimensions,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {db} from '../../firebase';
 import {useNavigation} from '@react-navigation/native';
-import Toast from 'react-native-easy-toast';
 import {useAuth} from '../../lib/auth';
+import {db} from '../../firebase';
 import * as yup from 'yup';
-import {Formik} from 'formik';
 import uuid from 'random-uuid-v4';
-import {Divider} from 'react-native-elements/dist/divider/Divider';
-import Loading from '../../components/Loading';
+import {Formik} from 'formik';
 import {Icon, Input} from 'react-native-elements';
-// import Carousel from '../../components/Carousel';
+import Toast from 'react-native-easy-toast';
+import Loading from '../../components/Loading';
 
-const ListForm = () => {
+const EditGroceryList = props => {
+  const {id, products, title} = props.route.params;
   const navigation = useNavigation();
   const toastRef = useRef();
   const {user} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [productList, setProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [productsList, setProductsList] = useState([]);
-  const [list, setList] = useState([]);
+  const [list, setList] = useState([...products]);
 
   useEffect(() => {
     let items = [];
@@ -41,18 +38,18 @@ const ListForm = () => {
         items.push(q);
       });
     });
-    setProducts(items);
+    setProductList(items);
   }, []);
 
   useEffect(() => {
-    if (products.length === 0) {
+    if (productList.length === 0) {
       setRefreshing(true);
       wait(2000).then(() => setRefreshing(false));
     }
-  }, [products.length]);
+  }, [productList.length]);
 
   const schema = yup.object().shape({
-    title: yup.string().required('Ingrese un título'),
+    title: yup.string().required('Ingrese un título para la lista'),
   });
 
   const wait = timeout => {
@@ -65,21 +62,37 @@ const ListForm = () => {
   }, [setRefreshing]);
 
   const onFinish = async data => {
-    if (list.length > 0) {
-      db.ref(`groceryList/${user.uid}`)
-        .push()
-        .set({
-          title: data.title,
-          products: list,
-          id: uuid(),
-        })
-        .then(() => {
-          navigation.navigate('grocery_list');
-        });
+    if (data.title === '') {
+      toastRef.current.show('Ingrese un título para su lista de compras');
     } else {
-      toastRef.current.show(
-        'Debe seleccionar al menos un producto para su lista de compras',
-      );
+      if (list.length > 0) {
+        db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
+          snapshot.forEach(itemId => {
+            const q = itemId.val();
+            if (q.id === id) {
+              db.ref(`groceryList/${user.uid}/${itemId.key}`)
+                .set({
+                  title: data.title,
+                  products: list,
+                  id: id,
+                })
+                .then(() => {
+                  toastRef.current.show('Lista actualizada');
+                  navigation.navigate('grocery_list');
+                })
+                .catch(() => {
+                  toastRef.current.show(
+                    'Debe seleccionar al menos un producto para su lista de compras',
+                  );
+                });
+            }
+          });
+        });
+      } else {
+        toastRef.current.show(
+          'Debe seleccionar al menos un producto para su lista de compras',
+        );
+      }
     }
   };
 
@@ -89,7 +102,7 @@ const ListForm = () => {
         <Formik
           validationSchema={schema}
           initialValues={{
-            title: '',
+            title: title,
           }}
           onSubmit={onFinish}>
           {({
@@ -122,43 +135,46 @@ const ListForm = () => {
               {errors.title && (
                 <Text style={styles.errorMessage}>{errors.title}</Text>
               )}
-              {!isValid &&
-                toastRef.current.show('Ingrese un título para la lista')}
+              <Button
+                onPress={handleSubmit}
+                title="Guardar lista h"
+                disabled={!isValid}
+                containerStyle={styles.btnContainerLogin}
+                // loading={isLoading}
+              />
             </>
           )}
         </Formik>
+        <Button
+          title="Guardar lista"
+          // containerStyle={styles.btnContainerLogin}
+          // loading={isLoading}
+        />
       </View>
-      {products.length > 0 ? (
-        <View>
-          <FlatList
-            data={products}
-            numColumns={2}
-            contentContainerStyle={styles.columns}
-            refreshControl={
-              <RefreshControl
-                enabled={true}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-            renderItem={product => (
-              <IndividualProduct
-                product={product}
-                navigation={navigation}
-                toastRef={toastRef}
-                setRefresh={setRefreshing()}
-                setProductsLists={setProductsList}
-                productsList={productsList}
-                list={list}
-                setList={setList}
-              />
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            // onEndReachedThreshold={0.5}
-            // onEndReached={handleLoadMore}
-            // ListFooterComponent={<FooterList isLoading={isLoading} />}
-          />
-        </View>
+      {productList.length > 0 ? (
+        <FlatList
+          data={productList}
+          numColumns={2}
+          columnWrapperStyle={styles.columns}
+          refreshControl={
+            <RefreshControl
+              enabled={true}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          renderItem={product => (
+            <IndividualProduct
+              product={product}
+              navigation={navigation}
+              toastRef={toastRef}
+              setRefresh={setRefreshing}
+              list={list}
+              setList={setList}
+            />
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
       ) : (
         <View>
           <ActivityIndicator />
@@ -170,7 +186,8 @@ const ListForm = () => {
 };
 
 function IndividualProduct({product, navigation, toastRef, list, setList}) {
-  const {id, imgUrl, name, price} = product.item;
+  const {imgUrl, name, price, id} = product.item;
+  const {index} = product.index;
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(null);
 
@@ -181,17 +198,36 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
   };
 
   const handleDeleteProduct = idItem => {
-    console.log('num', idItem);
     const num = idItem - 1;
-    console.log('num nuev', num);
     setList(prevState => {
       return prevState.filter((list, i) => i !== num);
     });
   };
 
+  // console.log('listass que hay', list);
+
   return (
     <View>
       <View style={styles.container}>
+        {/*{list.forEach(item => {*/}
+        {/*  if (item.name === name) {*/}
+        {/*    console.log('hii', item.name);*/}
+        {/*    return (*/}
+        {/*      <TouchableOpacity onPress={() => handleDeleteProduct(id)}>*/}
+        {/*        <Text style={styles.actionText}>Eliminar</Text>*/}
+        {/*      </TouchableOpacity>*/}
+        {/*    );*/}
+        {/*  } else {*/}
+        {/*    console.log('no', item.name);*/}
+        {/*    return (*/}
+        {/*      <TouchableOpacity onPress={handleAddProduct}>*/}
+        {/*        <Text style={styles.actionText}>Agregar</Text>*/}
+        {/*      </TouchableOpacity>*/}
+        {/*    );*/}
+        {/*  }*/}
+        {/*})}*/}
+
+        {/*{list.indexOf(product.item) && console.log('hii no', name)}*/}
         {list.includes(product.item) ? (
           <TouchableOpacity onPress={() => handleDeleteProduct(id)}>
             <Text style={styles.actionText}>Eliminar</Text>
@@ -201,9 +237,7 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
             <Text style={styles.actionText}>Agregar</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.title} adjustsFontSizeToFit>
-          {name}
-        </Text>
+        <Text style={styles.title}>{name}</Text>
         <View style={styles.images}>
           <Image source={{uri: imgUrl}} style={styles.product} />
         </View>
@@ -214,19 +248,29 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
   );
 }
 
-export default ListForm;
+export default EditGroceryList;
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
     backgroundColor: '#fff',
     flex: 1,
-    // justifyContent: 'space-between',
+  },
+  textStyle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#000',
+    marginBottom: 20,
+    marginTop: 20,
   },
   product: {
     height: 150,
     width: 150,
     marginBottom: 20,
+  },
+  viewBody: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
@@ -234,10 +278,17 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     marginBottom: 10,
-    marginRight: 20,
     fontWeight: 'bold',
-    justifyContent: 'center',
-    textAlignVertical: 'auto',
+  },
+  iconEdit: {
+    position: 'absolute',
+    right: 50,
+    top: 10,
+  },
+  iconTrash: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
   form: {
     flexDirection: 'row',
@@ -256,11 +307,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   columns: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 20,
-    flex: 0.5,
-    // width: Dimensions.get('window').width / 2,
+    // borderWidth: 1,
   },
   inputForm: {
     marginBottom: 10,
