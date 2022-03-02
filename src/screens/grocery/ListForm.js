@@ -1,15 +1,13 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  FlatList,
-  RefreshControl,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
   ActivityIndicator,
-  Button,
-  Dimensions,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import {db} from '../../firebase';
 import {useNavigation} from '@react-navigation/native';
@@ -18,7 +16,6 @@ import {useAuth} from '../../lib/auth';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import uuid from 'random-uuid-v4';
-import {Divider} from 'react-native-elements/dist/divider/Divider';
 import Loading from '../../components/Loading';
 import {Icon, Input} from 'react-native-elements';
 // import Carousel from '../../components/Carousel';
@@ -27,7 +24,6 @@ const ListForm = () => {
   const navigation = useNavigation();
   const toastRef = useRef();
   const {user} = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [productsList, setProductsList] = useState([]);
@@ -132,8 +128,8 @@ const ListForm = () => {
         <View>
           <FlatList
             data={products}
-            numColumns={2}
-            contentContainerStyle={styles.columns}
+            // numColumns={2}
+            // contentContainerStyle={styles.columns}
             refreshControl={
               <RefreshControl
                 enabled={true}
@@ -169,10 +165,10 @@ const ListForm = () => {
   );
 };
 
-function IndividualProduct({product, navigation, toastRef, list, setList}) {
-  const {id, imgUrl, name, price} = product.item;
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState(null);
+function IndividualProduct({product, list, setList}) {
+  const {id, imgUrl, name} = product.item;
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [loadingText, setLoadingText] = useState(null);
 
   const handleAddProduct = () => {
     if (!list.includes(product.item)) {
@@ -181,11 +177,8 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
   };
 
   const handleDeleteProduct = idItem => {
-    console.log('num', idItem);
-    const num = idItem - 1;
-    console.log('num nuev', num);
     setList(prevState => {
-      return prevState.filter((list, i) => i !== num);
+      return prevState.filter((list, i) => i !== idItem);
     });
   };
 
@@ -209,7 +202,7 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
         </View>
         {/*<Divider style={styles.divider} width={1} />*/}
       </View>
-      <Loading isVisible={isLoading} text={loadingText} />
+      {/*<Loading isVisible={isLoading} text={loadingText} />*/}
     </View>
   );
 }
@@ -245,8 +238,8 @@ const styles = StyleSheet.create({
   actionText: {
     color: '#5da1d8',
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 10,
+    right: 20,
   },
   divider: {
     marginTop: 10,

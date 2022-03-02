@@ -17,13 +17,12 @@ const App = () => {
   });
 
   return (
-      <>
-        <AuthProvider>
-          <Navigation />
-        </AuthProvider>
-      </>
+    <>
+      <AuthProvider>
+        <Navigation />
+      </AuthProvider>
+    </>
   );
 };
-
 
 export default App;

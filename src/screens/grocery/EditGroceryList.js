@@ -14,18 +14,15 @@ import {useNavigation} from '@react-navigation/native';
 import {useAuth} from '../../lib/auth';
 import {db} from '../../firebase';
 import * as yup from 'yup';
-import uuid from 'random-uuid-v4';
 import {Formik} from 'formik';
 import {Icon, Input} from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
-import Loading from '../../components/Loading';
 
 const EditGroceryList = props => {
   const {id, products, title} = props.route.params;
   const navigation = useNavigation();
   const toastRef = useRef();
   const {user} = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   const [productList, setProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [list, setList] = useState([...products]);
@@ -154,8 +151,8 @@ const EditGroceryList = props => {
       {productList.length > 0 ? (
         <FlatList
           data={productList}
-          numColumns={2}
-          columnWrapperStyle={styles.columns}
+          // numColumns={2}
+          // columnWrapperStyle={styles.columns}
           refreshControl={
             <RefreshControl
               enabled={true}
@@ -185,11 +182,8 @@ const EditGroceryList = props => {
   );
 };
 
-function IndividualProduct({product, navigation, toastRef, list, setList}) {
-  const {imgUrl, name, price, id} = product.item;
-  const {index} = product.index;
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState(null);
+function IndividualProduct({product, list, setList}) {
+  const {imgUrl, name, id} = product.item;
 
   const handleAddProduct = () => {
     if (!list.includes(product.item)) {
@@ -198,9 +192,9 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
   };
 
   const handleDeleteProduct = idItem => {
-    const num = idItem - 1;
+    // const num = idItem - 1;
     setList(prevState => {
-      return prevState.filter((list, i) => i !== num);
+      return prevState.filter((list, i) => i !== idItem);
     });
   };
 
@@ -243,7 +237,7 @@ function IndividualProduct({product, navigation, toastRef, list, setList}) {
         </View>
         {/*<Divider style={styles.divider} width={1} />*/}
       </View>
-      <Loading isVisible={isLoading} text={loadingText} />
+      W
     </View>
   );
 }
@@ -296,8 +290,8 @@ const styles = StyleSheet.create({
   actionText: {
     color: '#5da1d8',
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 10,
+    right: 20,
   },
   divider: {
     marginTop: 10,

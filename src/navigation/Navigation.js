@@ -7,7 +7,6 @@ import Home from '../screens/Home';
 import LoginStack from './LoginStack';
 import EditProfileOptionsUser from '../screens/account/EditProfileOptionsUser';
 import GroceryStack from './GroceryStack';
-import GroceryList from '../screens/grocery/GroceryList';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,13 +22,19 @@ const Navigation = () => {
           tabBarInactiveTintColor: '#646464',
           tabBarActiveTintColor: '#a061a8',
         })}>
-        <Tab.Screen name="home" component={Home} options={{title: 'Inicio'}} />
         {!user && (
-          <Tab.Screen
-            name="accountlogin"
-            component={LoginStack}
-            options={{title: 'Registro'}}
-          />
+          <>
+            <Tab.Screen
+              name="home"
+              component={Home}
+              options={{title: 'Inicio'}}
+            />
+            <Tab.Screen
+              name="accountlogin"
+              component={LoginStack}
+              options={{title: 'Registro'}}
+            />
+          </>
         )}
         {user && (
           <>

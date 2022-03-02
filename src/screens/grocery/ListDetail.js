@@ -2,14 +2,12 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
+  RefreshControl,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  RefreshControl,
   View,
 } from 'react-native';
-import {CheckBox, Divider, Icon} from 'react-native-elements';
-import Loading from '../../components/Loading';
+import {CheckBox, Divider} from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import {db} from '../../firebase';
 import {useAuth} from '../../lib/auth';
@@ -19,6 +17,7 @@ const ListDetail = props => {
   const toastRef = useRef();
   const {id, title, products} = route.params;
   const [refreshing, setRefreshing] = useState(false);
+  console.log('qe ', products);
 
   const wait = timeout => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -63,33 +62,66 @@ const ListDetail = props => {
   );
 };
 
-function ProductList({product, idPublication, setRefreshing, toastRef}) {
-  const {id, price, name, imgUrl} = product.item;
+function ProductList({product, idPublication, toastRef}) {
+  const {id, name, imgUrl} = product.item;
   const {user} = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
   const [isSelected, setSelection] = useState(false);
-  const [productsItem, setProductsItem] = useState(null);
 
-  const handleDelete = () => {
+  // const handleSelection = () => {
+  //   setSelection(!isSelected);
+  //
+  //   // handleChecked();
+  // };
+
+  console.log('seleccion', isSelected);
+
+  // useEffect(() => {
+  //   db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
+  //     snapshot.forEach(item => {
+  //       const q = item.val();
+  //       if (q.id === idPublication) {
+  //         q.products.forEach((itemIn, i) => {
+  //           if (itemIn.id === id) {
+  //             db.ref(
+  //               `groceryList/${user.uid}/${item.key}/products/${i}/checked`,
+  //             )
+  //               .set(isSelected)
+  //               .then(() => {
+  //                 setIsLoading(false);
+  //                 //setRefreshing(true);
+  //               })
+  //               .catch(() => {
+  //                 setIsLoading(false);
+  //                 toastRef.current.show(
+  //                   'Ha ocurrido un error, por favor intente nuevamente más tarde ',
+  //                 );
+  //               });
+  //           }
+  //         });
+  //       }
+  //     });
+  //   });
+  // }, [id, idPublication, isSelected, toastRef, user.uid]);
+
+  const handleSave = () => {
+    setSelection(!isSelected);
     db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
       snapshot.forEach(item => {
         const q = item.val();
         if (q.id === idPublication) {
           q.products.forEach((itemIn, i) => {
             if (itemIn.id === id) {
-              console.log('cada uni', i);
               db.ref(
                 `groceryList/${user.uid}/${item.key}/products/${i}/checked`,
               )
                 .set(true)
                 .then(() => {
-                  setIsLoading(false);
-                  setRefreshing(true);
-                  toastRef.current.show('Producto eliminado');
+                  // setIsLoading(false);
+                  //setRefreshing(true);
                 })
                 .catch(() => {
-                  setIsLoading(false);
+                  // setIsLoading(false);
                   toastRef.current.show(
                     'Ha ocurrido un error, por favor intente nuevamente más tarde ',
                   );
@@ -110,20 +142,12 @@ function ProductList({product, idPublication, setRefreshing, toastRef}) {
         <CheckBox
           right
           checked={isSelected}
-          onPress={() => setSelection(!isSelected)}
+          onPress={handleSave}
           containerStyle={styles.checkbox}
           checkedColor="#a061a8"
           color="#a061a8"
         />
-        {/*<Icon*/}
-        {/*  name="delete"*/}
-        {/*  type="material-community"*/}
-        {/*  size={30}*/}
-        {/*  containerStyle={styles.iconTrash}*/}
-        {/*  onPress={handleDelete}*/}
-        {/*/>*/}
       </View>
-      <Loading isVisible={isLoading} text={loadingText} />
     </View>
   );
 }

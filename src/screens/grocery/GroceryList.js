@@ -1,9 +1,8 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
   Alert,
   Dimensions,
   FlatList,
-  Image,
   RefreshControl,
   StyleSheet,
   Text,
@@ -12,7 +11,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-easy-toast';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {Divider, Icon} from 'react-native-elements';
+import {Avatar, Divider, Icon} from 'react-native-elements';
 import {db} from '../../firebase';
 import {useAuth} from '../../lib/auth';
 import Loading from '../../components/Loading';
@@ -23,7 +22,6 @@ const GroceryList = () => {
   const navigation = useNavigation();
   const toastRef = useRef();
   const {user} = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   const [groceryList, setGroceryList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -43,7 +41,6 @@ const GroceryList = () => {
         snapshot.forEach(item => {
           const q = item.val();
           listItem.push(q);
-          console.log('que productos hay', q.products);
         });
       });
       setGroceryList(listItem.reverse());
@@ -96,6 +93,16 @@ function List({listItem, navigation, toastRef, setRefresh}) {
   const {user} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const wait = timeout => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, [setRefreshing]);
 
   const handleNavigation = () => {
     navigation.navigate('list_detail', {id, title, products});
@@ -144,6 +151,23 @@ function List({listItem, navigation, toastRef, setRefresh}) {
         <TouchableOpacity onPress={handleNavigation}>
           <Text style={styles.title}>{title}</Text>
         </TouchableOpacity>
+        <Text style={styles.subtitle}>Productos: </Text>
+        {products && (
+          <FlatList
+            data={products}
+            numColumns={7}
+            refreshControl={
+              <RefreshControl
+                enabled={true}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+            renderItem={product => <IndividualProduct product={product} />}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
+
         <Icon
           name="pencil"
           type="material-community"
@@ -165,6 +189,13 @@ function List({listItem, navigation, toastRef, setRefresh}) {
   );
 }
 
+function IndividualProduct({product}) {
+  const {imgUrl} = product.item;
+  return (
+    <Avatar rounded source={{uri: imgUrl}} resizeMode="contain" size="medium" />
+  );
+}
+
 export default GroceryList;
 
 const styles = StyleSheet.create({
@@ -173,6 +204,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#000',
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  container: {
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  divider: {
     marginBottom: 20,
     marginTop: 20,
   },
@@ -199,6 +238,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     fontSize: 20,
+    color: '#000',
+  },
+  subtitle: {
+    color: 'grey',
+    marginLeft: 50,
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 15,
   },
   iconEdit: {
     position: 'absolute',

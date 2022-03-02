@@ -1,7 +1,5 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import Login from '../screens/account/Login';
-import Register from '../screens/account/Register';
 import GroceryList from '../screens/grocery/GroceryList';
 import ListForm from '../screens/grocery/ListForm';
 import ListDetail from '../screens/grocery/ListDetail';
