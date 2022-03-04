@@ -26,6 +26,7 @@ const EditGroceryList = props => {
   const [productList, setProductList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [list, setList] = useState([...products]);
+  const [newList, setNewList] = useState([]);
 
   useEffect(() => {
     let items = [];
@@ -62,7 +63,7 @@ const EditGroceryList = props => {
     if (data.title === '') {
       toastRef.current.show('Ingrese un título para su lista de compras');
     } else {
-      if (list.length > 0) {
+      if (list.length > 0 && newList.length > 0) {
         db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
           snapshot.forEach(itemId => {
             const q = itemId.val();
@@ -89,6 +90,7 @@ const EditGroceryList = props => {
         toastRef.current.show(
           'Debe seleccionar al menos un producto para su lista de compras',
         );
+        navigation.navigate('grocery_list');
       }
     }
   };
@@ -132,27 +134,13 @@ const EditGroceryList = props => {
               {errors.title && (
                 <Text style={styles.errorMessage}>{errors.title}</Text>
               )}
-              <Button
-                onPress={handleSubmit}
-                title="Guardar lista h"
-                disabled={!isValid}
-                containerStyle={styles.btnContainerLogin}
-                // loading={isLoading}
-              />
             </>
           )}
         </Formik>
-        <Button
-          title="Guardar lista"
-          // containerStyle={styles.btnContainerLogin}
-          // loading={isLoading}
-        />
       </View>
       {productList.length > 0 ? (
         <FlatList
           data={productList}
-          // numColumns={2}
-          // columnWrapperStyle={styles.columns}
           refreshControl={
             <RefreshControl
               enabled={true}
@@ -168,6 +156,7 @@ const EditGroceryList = props => {
               setRefresh={setRefreshing}
               list={list}
               setList={setList}
+              setNewList={setNewList}
             />
           )}
           keyExtractor={(item, index) => index.toString()}
@@ -182,46 +171,35 @@ const EditGroceryList = props => {
   );
 };
 
-function IndividualProduct({product, list, setList}) {
+function IndividualProduct({product, list, setList, setNewList, toastRef}) {
   const {imgUrl, name, id} = product.item;
 
   const handleAddProduct = () => {
-    if (!list.includes(product.item)) {
-      setList([...list, product.item]);
-    }
-  };
-
-  const handleDeleteProduct = idItem => {
-    // const num = idItem - 1;
-    setList(prevState => {
-      return prevState.filter((list, i) => i !== idItem);
+    list.forEach(item => {
+      if (item.name === name) {
+        toastRef.current.show('Producto ya agregado, escoja otro');
+      } else {
+        setList([...list, product.item]);
+        setNewList([...list, product.item]);
+      }
     });
   };
 
-  // console.log('listass que hay', list);
+  const handleDeleteProduct = idItem => {
+    let num = 0;
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].id === idItem) {
+        num = i;
+      }
+    }
+    setList(prevState => {
+      return prevState.filter((list, i) => i !== num);
+    });
+  };
 
   return (
     <View>
       <View style={styles.container}>
-        {/*{list.forEach(item => {*/}
-        {/*  if (item.name === name) {*/}
-        {/*    console.log('hii', item.name);*/}
-        {/*    return (*/}
-        {/*      <TouchableOpacity onPress={() => handleDeleteProduct(id)}>*/}
-        {/*        <Text style={styles.actionText}>Eliminar</Text>*/}
-        {/*      </TouchableOpacity>*/}
-        {/*    );*/}
-        {/*  } else {*/}
-        {/*    console.log('no', item.name);*/}
-        {/*    return (*/}
-        {/*      <TouchableOpacity onPress={handleAddProduct}>*/}
-        {/*        <Text style={styles.actionText}>Agregar</Text>*/}
-        {/*      </TouchableOpacity>*/}
-        {/*    );*/}
-        {/*  }*/}
-        {/*})}*/}
-
-        {/*{list.indexOf(product.item) && console.log('hii no', name)}*/}
         {list.includes(product.item) ? (
           <TouchableOpacity onPress={() => handleDeleteProduct(id)}>
             <Text style={styles.actionText}>Eliminar</Text>
@@ -235,9 +213,7 @@ function IndividualProduct({product, list, setList}) {
         <View style={styles.images}>
           <Image source={{uri: imgUrl}} style={styles.product} />
         </View>
-        {/*<Divider style={styles.divider} width={1} />*/}
       </View>
-      W
     </View>
   );
 }

@@ -7,7 +7,6 @@ import ChangeDisplayNameForm from '../../components/account/ChangeDisplayNameFor
 import {auth, db} from '../../firebase';
 import ChangeEmailForm from '../../components/account/ChangeEmailForm';
 import ChangePasswordForm from '../../components/account/ChangePasswordForm';
-import Loading from '../../components/Loading';
 import Toast from 'react-native-easy-toast';
 
 const ProfileOptions = () => {

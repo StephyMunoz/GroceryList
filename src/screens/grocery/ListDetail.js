@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {CheckBox, Divider} from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
-import {db} from '../../firebase';
 import {useAuth} from '../../lib/auth';
 
 const ListDetail = props => {
@@ -34,7 +33,6 @@ const ListDetail = props => {
 
   return (
     <View style={styles.viewBody}>
-      {/*<Text style={styles.text}>Productos agregados</Text>*/}
       {products && (
         <FlatList
           data={products}
@@ -62,76 +60,9 @@ const ListDetail = props => {
   );
 };
 
-function ProductList({product, idPublication, toastRef}) {
-  const {id, name, imgUrl} = product.item;
-  const {user} = useAuth();
-  // const [isLoading, setIsLoading] = useState(false);
+function ProductList({product}) {
+  const {name, imgUrl} = product.item;
   const [isSelected, setSelection] = useState(false);
-
-  // const handleSelection = () => {
-  //   setSelection(!isSelected);
-  //
-  //   // handleChecked();
-  // };
-
-  console.log('seleccion', isSelected);
-
-  // useEffect(() => {
-  //   db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
-  //     snapshot.forEach(item => {
-  //       const q = item.val();
-  //       if (q.id === idPublication) {
-  //         q.products.forEach((itemIn, i) => {
-  //           if (itemIn.id === id) {
-  //             db.ref(
-  //               `groceryList/${user.uid}/${item.key}/products/${i}/checked`,
-  //             )
-  //               .set(isSelected)
-  //               .then(() => {
-  //                 setIsLoading(false);
-  //                 //setRefreshing(true);
-  //               })
-  //               .catch(() => {
-  //                 setIsLoading(false);
-  //                 toastRef.current.show(
-  //                   'Ha ocurrido un error, por favor intente nuevamente más tarde ',
-  //                 );
-  //               });
-  //           }
-  //         });
-  //       }
-  //     });
-  //   });
-  // }, [id, idPublication, isSelected, toastRef, user.uid]);
-
-  const handleSave = () => {
-    setSelection(!isSelected);
-    db.ref(`groceryList/${user.uid}`).on('value', snapshot => {
-      snapshot.forEach(item => {
-        const q = item.val();
-        if (q.id === idPublication) {
-          q.products.forEach((itemIn, i) => {
-            if (itemIn.id === id) {
-              db.ref(
-                `groceryList/${user.uid}/${item.key}/products/${i}/checked`,
-              )
-                .set(true)
-                .then(() => {
-                  // setIsLoading(false);
-                  //setRefreshing(true);
-                })
-                .catch(() => {
-                  // setIsLoading(false);
-                  toastRef.current.show(
-                    'Ha ocurrido un error, por favor intente nuevamente más tarde ',
-                  );
-                });
-            }
-          });
-        }
-      });
-    });
-  };
 
   return (
     <View>
@@ -142,7 +73,7 @@ function ProductList({product, idPublication, toastRef}) {
         <CheckBox
           right
           checked={isSelected}
-          onPress={handleSave}
+          onPress={() => setSelection(!isSelected)}
           containerStyle={styles.checkbox}
           checkedColor="#a061a8"
           color="#a061a8"
@@ -212,9 +143,6 @@ const styles = StyleSheet.create({
   },
   action: {
     flexDirection: 'row',
-  },
-  columns: {
-    // borderWidth: 1,
   },
   inputForm: {
     marginBottom: 10,

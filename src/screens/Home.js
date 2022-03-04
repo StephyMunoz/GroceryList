@@ -25,9 +25,7 @@ const Home = () => {
       </View>
       <View>
         <Text style={styles.infoText}>
-          Esta es una aplicación que te facilitará tu lista de compras
-        </Text>
-        <Text style={styles.infoText}>
+          Esta es una aplicación que te facilitará hacer tu lista de compras
           solo debes agregar el producto que necesitas y listo!
         </Text>
         <Text style={styles.infoText}>
@@ -62,8 +60,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   infoText: {
-    // marginTop: 50,
-    fontSize: 15,
+    fontSize: 18,
     color: '#fff',
     marginLeft: 20,
     marginRight: 20,
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: 150,
-    marginBottom: 30,
+    marginBottom: 50,
     width: 150,
   },
 });

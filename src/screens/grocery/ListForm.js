@@ -16,9 +16,7 @@ import {useAuth} from '../../lib/auth';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import uuid from 'random-uuid-v4';
-import Loading from '../../components/Loading';
 import {Icon, Input} from 'react-native-elements';
-// import Carousel from '../../components/Carousel';
 
 const ListForm = () => {
   const navigation = useNavigation();
@@ -128,8 +126,6 @@ const ListForm = () => {
         <View>
           <FlatList
             data={products}
-            // numColumns={2}
-            // contentContainerStyle={styles.columns}
             refreshControl={
               <RefreshControl
                 enabled={true}
@@ -150,9 +146,6 @@ const ListForm = () => {
               />
             )}
             keyExtractor={(item, index) => index.toString()}
-            // onEndReachedThreshold={0.5}
-            // onEndReached={handleLoadMore}
-            // ListFooterComponent={<FooterList isLoading={isLoading} />}
           />
         </View>
       ) : (
@@ -167,8 +160,6 @@ const ListForm = () => {
 
 function IndividualProduct({product, list, setList}) {
   const {id, imgUrl, name} = product.item;
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [loadingText, setLoadingText] = useState(null);
 
   const handleAddProduct = () => {
     if (!list.includes(product.item)) {
@@ -177,8 +168,14 @@ function IndividualProduct({product, list, setList}) {
   };
 
   const handleDeleteProduct = idItem => {
+    let num = 0;
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].id === idItem) {
+        num = i;
+      }
+    }
     setList(prevState => {
-      return prevState.filter((list, i) => i !== idItem);
+      return prevState.filter((list, i) => i !== num);
     });
   };
 
@@ -200,9 +197,7 @@ function IndividualProduct({product, list, setList}) {
         <View style={styles.images}>
           <Image source={{uri: imgUrl}} style={styles.product} />
         </View>
-        {/*<Divider style={styles.divider} width={1} />*/}
       </View>
-      {/*<Loading isVisible={isLoading} text={loadingText} />*/}
     </View>
   );
 }
@@ -211,10 +206,8 @@ export default ListForm;
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
     backgroundColor: '#fff',
     flex: 1,
-    // justifyContent: 'space-between',
   },
   product: {
     height: 150,
@@ -253,7 +246,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 20,
     flex: 0.5,
-    // width: Dimensions.get('window').width / 2,
   },
   inputForm: {
     marginBottom: 10,

@@ -25,7 +25,7 @@ export default function ChangeEmailForm({setIsVisible, isVisible}) {
       setChange(true);
       Alert.alert(
         'Email actualizado',
-        'El emal se ha actualizado exitosamente',
+        'El email se ha actualizado exitosamente',
       );
     } catch (e) {
       Alert.alert(
