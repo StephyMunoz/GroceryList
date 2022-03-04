@@ -59,3 +59,4 @@ Finalmente, seleccionando una lista, se podrá tendrán checkboxes junto a cada 
 
 ![image](https://user-images.githubusercontent.com/66144847/156701559-b15df18f-d45a-4452-a33e-d3b4557c3003.png)
 
+### Código
