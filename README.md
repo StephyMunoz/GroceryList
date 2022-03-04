@@ -42,3 +42,20 @@ Los datos ingresados también pueden ser modificados en el perfil de usuario en 
 La pantalla de edición de contraseña también se mostrará al recuperarla
 
 ![image](https://user-images.githubusercontent.com/66144847/156699023-d1bcccb0-63fb-4b9a-ab81-a27df5e79b83.png)
+
+Una vez dentro de la aplicación, se podrán observar todas las listas que se han creado o un mensaje que indica que no se han creado listas aún. Se puede crear más listas con el botón + de la esquina inferior y, como se puede observar en la imagen, la lista tendrá un nombre e imágenes de los productos que se han añadido a ella
+
+![image](https://user-images.githubusercontent.com/66144847/156700801-60839a8a-c35e-4a8d-808f-8b76b21da6c0.png)
+
+Utilizando los íconos de cada lista se podrá editar su nombre y contenido o eliminarla
+
+![image](https://user-images.githubusercontent.com/66144847/156700941-17d56814-45e9-49e8-b8b1-ca0e3bbd4f3d.png)
+
+La forma en que se edita el contenido de una lista es seleccionando de entre los productos disponibles cuales se quiere agregar o eliminar de una lista, cada producto tiene una opción junto a él para hacerlo
+
+![image](https://user-images.githubusercontent.com/66144847/156701115-16694dec-b577-4da4-a020-a89a9596a71b.png)
+
+Finalmente, seleccionando una lista, se podrá tendrán checkboxes junto a cada producto para que se pueda tachar lo que ya se ha comprado. Estos vistos se vaciarán la siguiente vez que se abra la lista para poder ver la lista desde cero y evitar que el usuario tenga que quitarlos manualmente
+
+![image](https://user-images.githubusercontent.com/66144847/156701559-b15df18f-d45a-4452-a33e-d3b4557c3003.png)
+
