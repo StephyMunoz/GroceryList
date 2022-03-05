@@ -114,3 +114,5 @@ Como ya se mencionó, las funciones de registro y sesión son manejadas con form
 - **Stepanie Muñoz:** Implementación CRUD, pantallas, transiciones
 - **Stiven López:** Navegación, registro, conexión con base de datos
 - **Mateo Borja:** Diseño del proyecto, estilos, interfaz, Base de datos, documentación
+
+**Nota:** Este proyecto se realizó en sesiones con todos los miembres del equipo, debido a la falta de recursos, no todos los miembros pudieron estar directamente involucrados en la construcción y ejecución de la aplicación, pero todos estuvieron igual de involucrados en cada paso que se realizaba en el proyecto.
