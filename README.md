@@ -60,3 +60,57 @@ Finalmente, seleccionando una lista, se podrá tendrán checkboxes junto a cada 
 ![image](https://user-images.githubusercontent.com/66144847/156701559-b15df18f-d45a-4452-a33e-d3b4557c3003.png)
 
 ### Código
+
+Como se mencionó, este proyecto fue realizado con React Native. A continuación se explican las partes más importantes del mismo.
+
+La estructura del proyecto se muestra en la siguiente figura, en la carpeta src se encuentra la mayoría del proyecto desarrollado
+
+![image](https://user-images.githubusercontent.com/66144847/156858318-d5166417-5fbb-4e07-a4bf-ef7484994dcd.png)
+
+La estructura de codificación en cada archivo es similar a la usada en proyectos con React, se comienza importando todos los componentes necesarios:
+
+![image](https://user-images.githubusercontent.com/66144847/156858532-2c192abb-1f39-45b4-b239-08449310c1f3.png)
+
+Luego se crean funciones que se utilizarán en el componente creado
+
+![image](https://user-images.githubusercontent.com/66144847/156858564-14729d4e-d805-4e18-a033-8c4193bfe611.png)
+
+Cada componente creado es en realidad una vista que se construir ubicando las diferentes partes como botones, campos de texto, imágenes, etc.
+
+![image](https://user-images.githubusercontent.com/66144847/156858656-bd951a7c-99f7-47de-af1f-2a69d730e88d.png)
+
+Finalmente, se escriben los estilos de cada uno de los componentes al final del archivo en forma de una StyleSheet
+
+![image](https://user-images.githubusercontent.com/66144847/156858712-f483c9c0-0384-47e0-9440-d1492f76ef67.png)
+
+Sabiendo esta estructura, se tienen las siguientes partes del proyecto:
+
+**Conexión con la base de datos:** Para este proyecto se utilizó Firebase, su conexión se realiza especificando las credenciales de un proyecto creado en Firebase (se recomienda utilizar variables de entorno por seguridad)
+
+![image](https://user-images.githubusercontent.com/66144847/156858956-97cf7080-2a05-4f67-8f81-9008999fd89e.png)
+
+**Autenticación:** Se usan las funciones de Firebase para crear usuarios con correo electrónico y contraseña, manejar la sesión del usuario y resetear la contraseña; toda esta funcionalidad se encuentra en el archivo lib/auth.js (muy grande para mostrarlo completamente)
+
+![image](https://user-images.githubusercontent.com/66144847/156859339-a3887e26-72bf-4b34-a9a6-9bafe90fc97a.png)
+
+**Formularios y Modales:** Como es común, se utilizan formularios para iniciar sesión y actualizar los datos en el perfil del usuario, los modales aparecen mostrando alertas de confirmación, credenciales incorrectos o el ingreso de nuevos datos. Como ejemplo se puede ver parte del archivo ChangeEmailForm.js
+
+![image](https://user-images.githubusercontent.com/66144847/156859594-c46f729b-8ee8-435e-9d0f-3758a4d0d7c1.png)
+
+**Navegación:** En la carpeta navigation se encuentran los archivos que definen las rutas de cada una de las pantallas, el siguiente es un fragmento del archivo Navigation.js
+
+![image](https://user-images.githubusercontent.com/66144847/156861579-55139167-4cd3-48f3-80d1-9c4aff28200c.png)
+
+Para mejor organización, las rutas se dividieron en todo lo que tiene que ver con el registro (LoginStack) y todo lo que tiene que ver con las listas (GroceryStack), cada uno en su propio archivo.
+
+**Pantallas:** Las pantallas de la aplicación también se dividen en la creación de cuenta y las listas de compras. Cada pantalla tiene su propio archivo, los cuales se pueden observar a continuación:
+
+![image](https://user-images.githubusercontent.com/66144847/156862102-f8a349fb-fa5b-4554-b341-a5fd91fda762.png)
+
+Como ya se mencionó, las funciones de registro y sesión son manejadas con formularios y modales. Toda la funcionalidad de lista de compras utiliza el muy popular UseEffect y UseState de React como métodos para actualizar las listas de compras y sus contenidos. Nada que no se haya visto en una aplicación CRUD como cualquier otra.
+
+### Responsabilidades y Roles
+
+**Stepanie Muñoz:** Implementación CRUD, pantallas, transiciones
+**Stiven López:** Navegación, registro, conexión con base de datos
+**Mateo Borja:** Diseño del proyecto, estilos, interfaz, Base de datos, documentación
