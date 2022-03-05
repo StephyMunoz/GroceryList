@@ -111,6 +111,6 @@ Como ya se mencionó, las funciones de registro y sesión son manejadas con form
 
 ### Responsabilidades y Roles
 
-**Stepanie Muñoz:** Implementación CRUD, pantallas, transiciones
-**Stiven López:** Navegación, registro, conexión con base de datos
-**Mateo Borja:** Diseño del proyecto, estilos, interfaz, Base de datos, documentación
+- **Stepanie Muñoz:** Implementación CRUD, pantallas, transiciones
+- **Stiven López:** Navegación, registro, conexión con base de datos
+- **Mateo Borja:** Diseño del proyecto, estilos, interfaz, Base de datos, documentación
